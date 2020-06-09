@@ -1,0 +1,23 @@
+﻿<form action="@Url.Action("Register")" method="post">
+    <div>
+        Name:
+        <input type="text" name="name" value="" />
+    </div>
+    <div>
+        Password:
+        <input type="password" name="password" value="" />
+    </div>
+    <div>
+        <div>
+            User
+            <input type="radio" name="role" value="user">
+        </div>
+        <div>
+            Admin
+            <input type="radio" name="role" value="admin">
+        </div>
+    </div>
+    <div>
+        <button type="submit">Register</button>
+    </div>
+</form>

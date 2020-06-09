@@ -32,7 +32,6 @@ namespace BlogMVC.Models
         public string Name { get; set; }
 
         [Column]
-        [Required]
         public bool IsAuthenticated { get; set; } = false;
 
         [Column]
@@ -41,4 +40,5 @@ namespace BlogMVC.Models
         [Column]
         public string AuthorizeToken { get; set; }
     }
+
 }

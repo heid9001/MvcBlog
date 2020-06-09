@@ -11,9 +11,6 @@ namespace BlogMVC.Services
 
     public class AuthService: IAuthService
     {
-        public const string TOKEN_NAME = "_token";
-
-
         ModelsContext _db;
         IUserService _userService;
         ITokenService _tokenService;
@@ -44,11 +41,16 @@ namespace BlogMVC.Services
             return user;
         }
 
-        // установка токена в куки
+        // установка токена в куки юзера в контекст
         public bool Authenticate(string login, string password)
         {
             var ctx = HttpContext.Current;
             var response = ctx.Response;
+
+            if (ctx.User != null && ctx.User.Identity.IsAuthenticated)
+            {
+                return true;
+            }
 
             var token = (string) _tokenService.GetTokenFromCookie();
 
@@ -61,6 +63,10 @@ namespace BlogMVC.Services
                     response.StatusCode = 401;
                     return false;
                 }
+                var usr = _userService.FindByToken(token);
+                usr.IsAuthenticated = true;
+                ctx.User = new UserPrincipal(usr);
+                _db.SaveChanges();
                 return true;
             }
 
@@ -75,6 +81,7 @@ namespace BlogMVC.Services
             // обновление модели юзера
             user.IsAuthenticated = true;
             _db.SaveChanges();
+            ctx.User = new UserPrincipal(user);
             _tokenService.StoreUserToken(user.AuthorizeToken);
             return true;
         }
@@ -85,31 +92,71 @@ namespace BlogMVC.Services
             var response = ctx.Response;
             var request =  ctx.Request;
 
-            var token = _tokenService.GetTokenFromCookie();
-            if (token == null) return false;
-
-            // поиск юзера по токену в бд
-            var user = _userService.FindByToken(token);
-            if (user == null || ! user.AuthorizeToken.Equals(token) || !user.IsAuthenticated)
+            if (!(ctx.User is UserPrincipal))
             {
                 return false;
             }
 
-            // проверка подписи
+            UserPrincipal user = (UserPrincipal) ctx.User;
+            
+
+            string token;
+
+            // получаем токен из кук и по нему юзера из бд
+            if (user == null)
+            {
+                token = _tokenService.GetTokenFromCookie();
+                if (token == null)
+                {
+                    response.StatusCode = 401;
+                    return false;
+                }
+
+                // поиск юзера по токену в бд
+                user = new UserPrincipal(_userService.FindByToken(token));
+                if (user == null || ! ((User) user.Identity).AuthorizeToken.Equals(token) || ! user.Identity.IsAuthenticated)
+                {
+                    response.StatusCode = 401;
+                    return false;
+                }
+            }
+            // получаем токен из HttpContext.User
+            else
+            {
+                token = ((User)user.Identity).AuthorizeToken;
+            }
             var result = new JwtSecurityTokenHandler().ReadJwtToken(token);
 
             // проверка роли
             string match = (from c in result.Claims
                         where c.Type.Equals("Role") && c.Value.Equals(role)
                         select c.Value).SingleOrDefault<string>();
+            if (match == null)
+            {
+                response.StatusCode = 401;
+                return false;
+            }
 
-            return match != null;
+            // устанавливаем юзера в контекст
+            ctx.User = user;
+            return true;
         }
 
         public void Logout()
         {
             var ctx = HttpContext.Current;
             var token = _tokenService.GetTokenFromCookie();
+
+            if (ctx.User != null && ctx.User.Identity.IsAuthenticated)
+            {
+                var user = (User)ctx.User.Identity;
+                user.IsAuthenticated = false;
+                _db.Users.Add(user);
+                _db.SaveChanges();
+                ctx.User = null;
+                _tokenService.RemoveTokenCookie();
+                return;
+            }
 
             if (token != null)
             {

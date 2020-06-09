@@ -6,6 +6,7 @@ using Unity;
 
 namespace BlogMVC.Controllers
 {
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         IAuthService _authService;

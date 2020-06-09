@@ -9,23 +9,17 @@ namespace BlogMVC.Models
     public class UserPrincipal : IPrincipal
     {
         User _user;
-        IAuthService _service;
+        IAuthService _service = DependencyResolver.Current.GetService<IAuthService>();
 
 
         public UserPrincipal(User user)
         {
             _user = user;
-            _service = DependencyResolver.Current.GetService<IAuthService>();
-        }
-
-        public UserPrincipal(User user, IAuthService service)
-        {
-            _user = user;
-            _service = service;
         }
 
         public IIdentity Identity => _user;
 
+        // 
         public bool IsInRole(string role)
         {
             return _service.Authorize(role);

@@ -1,6 +1,7 @@
 using BlogMVC.Models;
 using BlogMVC.Services;
 using BlogMVC.Services.Interfaces;
+using System.Diagnostics;
 using System.Web.Mvc;
 using Unity;
 using Unity.Mvc5;
@@ -20,6 +21,7 @@ namespace BlogMVC
 
             //container.RegisterType<>();
             container.RegisterType<ModelsContext>();
+
             container.RegisterInstance<ITokenService>(GetTokenService(container));
             container.RegisterInstance<IUserService>(GetUserService(container));
             container.RegisterInstance<IAuthService>(GetAuthService(container));
