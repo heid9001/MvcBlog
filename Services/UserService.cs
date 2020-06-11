@@ -1,5 +1,7 @@
 ﻿using System.Linq;
 using System.Text;
+using System.Data.Entity;
+using System.Linq.Expressions;
 using BlogMVC.Models;
 using BlogMVC.Utils;
 using BlogMVC.Services.Interfaces;
@@ -30,6 +32,7 @@ namespace BlogMVC.Services
             var user = (from u in _db.Users
                         where u.AuthorizeToken.Equals(token)
                         select u).SingleOrDefault<User>();
+            _db.Entry(user).State = EntityState.Detached;
             return user;
         }
 

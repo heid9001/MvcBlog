@@ -7,6 +7,9 @@ namespace BlogMVC.Services.Interfaces
     {
         User Register(string login, string password, string role);
         bool Authenticate(string login, string password);
+        bool IsAuthenticated();
+        UserPrincipal GetUserByToken(string token);
+
         bool Authorize(string role);
         void Logout();
     }

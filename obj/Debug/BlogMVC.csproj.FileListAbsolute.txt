@@ -96,7 +96,7 @@ C:\Users\Nick\source\repos\BlogMVC\BlogMVC\bin\Microsoft.IdentityModel.JsonWebTo
 C:\Users\Nick\source\repos\BlogMVC\BlogMVC\bin\Microsoft.IdentityModel.Logging.xml
 C:\Users\Nick\source\repos\BlogMVC\BlogMVC\bin\Microsoft.IdentityModel.Tokens.xml
 C:\Users\Nick\source\repos\BlogMVC\BlogMVC\bin\System.IdentityModel.Tokens.Jwt.xml
-C:\Users\Nick\source\repos\BlogMVC\BlogMVC\obj\Debug\BlogMVC.Migrations.Init.resources
-C:\Users\Nick\source\repos\BlogMVC\BlogMVC\obj\Debug\BlogMVC.csproj.GenerateResource.cache
 C:\Users\Nick\source\repos\BlogMVC\BlogMVC\bin\Unity.Mvc5.dll
-C:\Users\Nick\source\repos\BlogMVC\BlogMVC\obj\Debug\BlogMVC.Migrations.V1.resources
+C:\Users\Nick\source\repos\BlogMVC\BlogMVC\obj\Debug\BlogMVC.Migrations.init.resources
+C:\Users\Nick\source\repos\BlogMVC\BlogMVC\obj\Debug\BlogMVC.csproj.GenerateResource.cache
+C:\Users\Nick\source\repos\BlogMVC\BlogMVC\obj\Debug\BlogMVC.Migrations.fix.resources

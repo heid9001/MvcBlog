@@ -1,23 +1,30 @@
-﻿<form action="@Url.Action("Register")" method="post">
+﻿@model BlogMVC.Models.Transfer.UserDto
+
+@using (Html.BeginForm(actionName: "Register", controllerName: "Auth", method: FormMethod.Post))
+{
+
+    @Html.ValidationSummary(true)
     <div>
-        Name:
-        <input type="text" name="name" value="" />
+        @Html.LabelFor(model => model.Name)
+        <input type="text" name="name" />
     </div>
+
     <div>
-        Password:
-        <input type="password" name="password" value="" />
+        @Html.LabelFor(model => model.Password)
+        <input type="password" name="password" />
     </div>
+
     <div>
-        <div>
-            User
-            <input type="radio" name="role" value="user">
-        </div>
-        <div>
-            Admin
-            <input type="radio" name="role" value="admin">
-        </div>
+        User:
+        <input type="radio" name="role" value="user" />
     </div>
+
     <div>
-        <button type="submit">Register</button>
+        Admin:
+        <input type="radio" name="role" value="admin" />
     </div>
-</form>
+
+    <div>
+        <button class="button" type="submit">Register</button>
+    </div>
+}

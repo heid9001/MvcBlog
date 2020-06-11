@@ -1,13 +1,11 @@
-﻿using System;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using BlogMVC.Models.Transfer;
-using BlogMVC.Models.Validators;
-using BlogMVC.Services.Filters;
 using BlogMVC.Services.Interfaces;
 
 
 namespace BlogMVC.Controllers
 {
+    [AllowAnonymous]
     public class AuthController : Controller
     {
         IAuthService _authService;
@@ -17,51 +15,55 @@ namespace BlogMVC.Controllers
             _authService = authService;
         }
 
+        [HttpGet]
+        public ActionResult Logout()
+        {
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                _authService.Logout();
+            }
+            return RedirectToAction("Login", "Auth");
+        }
+
         // GET: Auth
         [HttpGet]
         public ActionResult Login()
         {
-            return View();
+            if (! HttpContext.User.Identity.IsAuthenticated)
+            {
+                return View();
+            }
+            return RedirectToRoute("Home", new { action = "Index" });
         }
 
         [HttpPost]
         public ActionResult Login(UserDto user)
         {
-            if (user.ValidateForLogin())
+            if (! ModelState.IsValid)
             {
-                _authService.Authenticate(user.Name, user.Password);
-                return RedirectToRoute("Home", new { action = "Index"});
+                return View(user);
             }
-            return RedirectToAction("Login");
+            return RedirectToRoute("Home", new { action = "Index" });
         }
 
         [HttpGet]
         public ActionResult Register()
         {
-            return View();
+            if (! HttpContext.User.Identity.IsAuthenticated)
+            {
+                return View();
+            }
+            return RedirectToRoute("Home", new { action = "Index" });
         }
 
         [HttpPost]
         public ActionResult Register(UserDto user)
         {
-            if (user.ValidateForRegistration())
+            if (! ModelState.IsValid)
             {
-                _authService.Register(user.Name, user.Password, user.Role);
+                return View(user); ;
             }
-
-            return RedirectToRoute("Home", new { action = "Index" });
-        }
-
-        [JwtAuthorize(Roles = "admin")]
-        public ActionResult Foo()
-        {
-
-            return Content("JwtAuthorize Granted!");
-        }
-
-        public ActionResult Bar()
-        {
-            return Content("No Authorize Attribute!");
+            return RedirectToAction("Login", "Auth");
         }
     }
 }

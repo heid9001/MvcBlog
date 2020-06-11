@@ -3,7 +3,7 @@ using BlogMVC.Utils;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Principal;
-
+using System.Collections.Generic;
 
 namespace BlogMVC.Models
 {
@@ -39,6 +39,9 @@ namespace BlogMVC.Models
 
         [Column]
         public string AuthorizeToken { get; set; }
+
+
+        public ICollection<Article> Articles { get; set; }
     }
 
 }

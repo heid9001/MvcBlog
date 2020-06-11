@@ -10,12 +10,40 @@ namespace BlogMVC.Models
     [Table("articles")]
     public class Article
     {
+        private User _user;
+
+        public Article()
+        {
+        }
+
+        public Article(User user)
+        {
+            _user = user;
+        }
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
 
+        
         [ForeignKey("User")]
-        public User user;
+        public long? UserFK {
+            get
+            {
+                return User.Id;
+            }
+        }
+
+        public User User {
+            get
+            {
+                return _user;
+            }
+            set
+            {
+                _user = value;
+            }
+        }
 
         [Column]
         [Required]

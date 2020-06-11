@@ -4,7 +4,8 @@ using BlogMVC.Utils;
 using BlogMVC.Models;
 using BlogMVC.Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
-
+using System;
+using System.Data.Entity;
 
 namespace BlogMVC.Services
 {
@@ -20,6 +21,15 @@ namespace BlogMVC.Services
             _db = ctx;
             _userService = userService;
             _tokenService = tokenService;
+        }
+
+        public bool IsAuthenticated()
+        {
+            if (_tokenService.GetTokenFromCookie() != null)
+            {
+                return true;
+            }
+            return false;
         }
 
         // заведение учетной записи
@@ -86,6 +96,17 @@ namespace BlogMVC.Services
             return true;
         }
 
+        public UserPrincipal GetUserByToken(string token)
+        {
+            var user = _userService.FindByToken(token);
+            _db.Entry(user).State = EntityState.Detached;
+            if (user != null)
+            {
+                return new UserPrincipal(user);
+            }
+            return null;
+        }
+
         public bool Authorize(string role)
         {
             var ctx = HttpContext.Current;
@@ -113,7 +134,7 @@ namespace BlogMVC.Services
                 }
 
                 // поиск юзера по токену в бд
-                user = new UserPrincipal(_userService.FindByToken(token));
+                user = GetUserByToken(token);
                 if (user == null || ! ((User) user.Identity).AuthorizeToken.Equals(token) || ! user.Identity.IsAuthenticated)
                 {
                     response.StatusCode = 401;
@@ -137,8 +158,6 @@ namespace BlogMVC.Services
                 return false;
             }
 
-            // устанавливаем юзера в контекст
-            ctx.User = user;
             return true;
         }
 
@@ -151,7 +170,9 @@ namespace BlogMVC.Services
             {
                 var user = (User)ctx.User.Identity;
                 user.IsAuthenticated = false;
-                _db.Users.Add(user);
+                _db.Entry(user).State = EntityState.Modified;
+
+                //_db.Users.Add(user);
                 _db.SaveChanges();
                 ctx.User = null;
                 _tokenService.RemoveTokenCookie();
