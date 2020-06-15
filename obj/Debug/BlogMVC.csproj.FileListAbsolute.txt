@@ -100,3 +100,7 @@ C:\Users\Nick\source\repos\BlogMVC\BlogMVC\bin\Unity.Mvc5.dll
 C:\Users\Nick\source\repos\BlogMVC\BlogMVC\obj\Debug\BlogMVC.Migrations.init.resources
 C:\Users\Nick\source\repos\BlogMVC\BlogMVC\obj\Debug\BlogMVC.csproj.GenerateResource.cache
 C:\Users\Nick\source\repos\BlogMVC\BlogMVC\obj\Debug\BlogMVC.Migrations.fix.resources
+C:\Users\Nick\source\repos\BlogMVC\BlogMVC\bin\System.Threading.Tasks.Extensions.dll
+C:\Users\Nick\source\repos\BlogMVC\BlogMVC\bin\WebActivatorEx.dll
+C:\Users\Nick\source\repos\BlogMVC\BlogMVC\bin\System.Threading.Tasks.Extensions.xml
+C:\Users\Nick\source\repos\BlogMVC\BlogMVC\obj\Debug\BlogMVC.Migrations.ch1.resources

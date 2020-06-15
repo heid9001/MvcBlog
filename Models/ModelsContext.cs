@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Web;
+﻿using System.Data.Entity;
+
 
 namespace BlogMVC.Models
 {
@@ -14,6 +11,11 @@ namespace BlogMVC.Models
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Articles)
+                .WithOptional(u => u.User)
+                .WillCascadeOnDelete(true);
         }
     }
 }

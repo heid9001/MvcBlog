@@ -11,7 +11,7 @@ namespace BlogMVC
 
             routes.MapRoute(
                 name: "Auth",
-                url: "Auth/{action}",
+                url: "Authz/{action}",
                 defaults: new { controller = "Auth", action = "Login" }
             );
 

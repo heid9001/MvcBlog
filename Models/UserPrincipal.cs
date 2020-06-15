@@ -1,8 +1,7 @@
 ﻿using System.Security.Principal;
-using System.Web;
 using System.Web.Mvc;
-using BlogMVC.Services;
 using BlogMVC.Services.Interfaces;
+
 
 namespace BlogMVC.Models
 {

@@ -6,22 +6,24 @@ using BlogMVC.Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System;
 using System.Data.Entity;
+using System.Web.Mvc;
 
 namespace BlogMVC.Services
 {
 
     public class AuthService: IAuthService
     {
-        ModelsContext _db;
         IUserService _userService;
         ITokenService _tokenService;
 
-        public AuthService(IUserService userService, ITokenService tokenService, ModelsContext ctx)
+        public AuthService(IUserService userService, ITokenService tokenService)
         {
-            _db = ctx;
             _userService = userService;
             _tokenService = tokenService;
         }
+
+        public ModelsContext Db => DependencyResolver.Current.GetService<ModelsContext>();
+        
 
         public bool IsAuthenticated()
         {
@@ -46,8 +48,8 @@ namespace BlogMVC.Services
             }
             var pair = (JwtPair) _tokenService.CreateUserToken(login, password, role);
             user = new User(login, pair, true);
-            _db.Users.Add(user);
-            _db.SaveChanges();
+            Db.Users.Add(user);
+            Db.SaveChanges();
             return user;
         }
 
@@ -76,7 +78,7 @@ namespace BlogMVC.Services
                 var usr = _userService.FindByToken(token);
                 usr.IsAuthenticated = true;
                 ctx.User = new UserPrincipal(usr);
-                _db.SaveChanges();
+                Db.SaveChanges();
                 return true;
             }
 
@@ -90,7 +92,7 @@ namespace BlogMVC.Services
 
             // обновление модели юзера
             user.IsAuthenticated = true;
-            _db.SaveChanges();
+            Db.SaveChanges();
             ctx.User = new UserPrincipal(user);
             _tokenService.StoreUserToken(user.AuthorizeToken);
             return true;
@@ -99,7 +101,6 @@ namespace BlogMVC.Services
         public UserPrincipal GetUserByToken(string token)
         {
             var user = _userService.FindByToken(token);
-            _db.Entry(user).State = EntityState.Detached;
             if (user != null)
             {
                 return new UserPrincipal(user);
@@ -170,10 +171,7 @@ namespace BlogMVC.Services
             {
                 var user = (User)ctx.User.Identity;
                 user.IsAuthenticated = false;
-                _db.Entry(user).State = EntityState.Modified;
-
-                //_db.Users.Add(user);
-                _db.SaveChanges();
+                Db.SaveChanges();
                 ctx.User = null;
                 _tokenService.RemoveTokenCookie();
                 return;
@@ -183,7 +181,7 @@ namespace BlogMVC.Services
             {
                 var user = _userService.FindByToken(token);
                 user.IsAuthenticated = false;
-                _db.SaveChanges();
+                Db.SaveChanges();
                 _tokenService.RemoveTokenCookie();
                 return;
             }

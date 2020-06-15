@@ -18,10 +18,7 @@
             @Html.DisplayNameFor(model => model.IsAuthenticated)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.IdentityKey)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.AuthorizeToken)
+            Role
         </th>
         <th></th>
     </tr>
@@ -35,10 +32,7 @@
             @Html.DisplayFor(modelItem => item.IsAuthenticated)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.IdentityKey)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.AuthorizeToken)
+            @item.Role
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |

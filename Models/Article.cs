@@ -10,7 +10,6 @@ namespace BlogMVC.Models
     [Table("articles")]
     public class Article
     {
-        private User _user;
 
         public Article()
         {
@@ -18,7 +17,7 @@ namespace BlogMVC.Models
 
         public Article(User user)
         {
-            _user = user;
+            User = user;
         }
 
         [Key]
@@ -34,16 +33,7 @@ namespace BlogMVC.Models
             }
         }
 
-        public virtual User User {
-            get
-            {
-                return _user;
-            }
-            set
-            {
-                _user = value;
-            }
-        }
+        public virtual User User { get; set; }
 
         [Column]
         [Required]

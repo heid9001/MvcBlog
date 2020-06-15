@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
@@ -8,18 +6,18 @@ using BlogMVC.Models;
 using BlogMVC.Services.Filters;
 using BlogMVC.Services.Interfaces;
 
+
 namespace BlogMVC.Controllers
 {
     [JwtAuthorize(Roles = "admin,user")]
     public class ArticlesController : Controller
     {
-        private ModelsContext _db;
+        public ModelsContext db => DependencyResolver.Current.GetService<ModelsContext>();
         private IAuthService _auth;
 
 
         public ArticlesController(ModelsContext db, IAuthService auth)
         {
-            _db = db;
             _auth = auth;
         }
 
@@ -27,7 +25,6 @@ namespace BlogMVC.Controllers
         public ActionResult Index()
         {
             var user = (User)HttpContext.User.Identity;
-            _db.Entry(user).State = EntityState.Modified;
 
             return View(user.Articles.ToList());
         }
@@ -39,7 +36,7 @@ namespace BlogMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Article article = _db.Articles.Find(id);
+            Article article = db.Articles.Find(id);
             if (article == null)
             {
                 return HttpNotFound();
@@ -61,15 +58,14 @@ namespace BlogMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Title,Content")] Article article)
         {
-            var user = (User) HttpContext.User.Identity as User;
-            _db.Entry(user).State = EntityState.Unchanged;
+            var user = (User) HttpContext.User.Identity;
             article.User = user;
 
 
             if (ModelState.IsValid)
             {
-                _db.Articles.Add(article);
-                _db.SaveChanges();
+                db.Articles.Add(article);
+                db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
@@ -84,10 +80,10 @@ namespace BlogMVC.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             var user = (User)HttpContext.User.Identity;
-            _db.Entry(user).State = EntityState.Unchanged;
-
-            Article article = _db.Articles.Find(id);
+            
+            Article article = db.Articles.Find(id);
             article.User = user;
+
             if (article == null)
             {
                 return HttpNotFound();
@@ -102,15 +98,14 @@ namespace BlogMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Title,Content")] Article article)
         {
-            var user = (User) HttpContext.User.Identity;
-            // TODO: refactor
-            // _db.Entry(user).State = EntityState.Detached;
-            _db.Entry(user).State = EntityState.Unchanged;
-            article.User = user;
+            var user = (User)HttpContext.User.Identity;
             if (ModelState.IsValid)
             {
-                _db.Entry(article).State = EntityState.Modified;
-                _db.SaveChanges();
+                var old = db.Articles.Where(a => a.Id == article.Id).SingleOrDefault();
+                old.Title = article.Title;
+                old.Content = article.Content;
+
+                db.SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(article);
@@ -123,7 +118,7 @@ namespace BlogMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Article article = _db.Articles.Find(id);
+            Article article = db.Articles.Find(id);
             if (article == null)
             {
                 return HttpNotFound();
@@ -136,18 +131,18 @@ namespace BlogMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(long id)
         {
-            Article article = _db.Articles.Find(id);
-            _db.Articles.Remove(article);
-            _db.SaveChanges();
+            Article article = db.Articles.Find(id);
+            db.Articles.Remove(article);
+            db.SaveChanges();
             return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+/*            if (disposing)
             {
                 _db.Dispose();
-            }
+            }*/
             base.Dispose(disposing);
         }
     }

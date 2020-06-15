@@ -1,11 +1,11 @@
-﻿using System.Web.Mvc;
+﻿using System;
+using System.Web.Mvc;
 using BlogMVC.Models.Transfer;
 using BlogMVC.Services.Interfaces;
 
 
 namespace BlogMVC.Controllers
 {
-    [AllowAnonymous]
     public class AuthController : Controller
     {
         IAuthService _authService;
@@ -29,11 +29,12 @@ namespace BlogMVC.Controllers
         [HttpGet]
         public ActionResult Login()
         {
-            if (! HttpContext.User.Identity.IsAuthenticated)
+            if (!HttpContext.User.Identity.IsAuthenticated)
             {
                 return View();
             }
-            return RedirectToRoute("Home", new { action = "Index" });
+
+            return RedirectToRoutePermanent("Home", new { action = "Index" });
         }
 
         [HttpPost]

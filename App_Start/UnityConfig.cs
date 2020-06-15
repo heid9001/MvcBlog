@@ -1,7 +1,6 @@
 using BlogMVC.Models;
 using BlogMVC.Services;
 using BlogMVC.Services.Interfaces;
-using System.Diagnostics;
 using System.Web.Mvc;
 using Unity;
 using Unity.Mvc5;
@@ -10,23 +9,29 @@ namespace BlogMVC
 {
     public static class UnityConfig
     {
-        public static void RegisterComponents()
+
+        public static void RegisterPerApp(UnityContainer appContainer)
         {
-			var container = new UnityContainer();
+            appContainer.RegisterInstance<ITokenService>(GetTokenService(appContainer));
+            appContainer.RegisterInstance<IUserService>(GetUserService(appContainer));
+            appContainer.RegisterInstance<IAuthService>(GetAuthService(appContainer));
+            DependencyResolver.SetResolver(new UnityDependencyResolver(appContainer));
+        }
 
-            // register all your components with the container here
-            // it is NOT necessary to register your controllers
+        public static void RegisterPerRequest(UnityContainer container)
+        {
+            ModelsContext db;
+            if ( ( db = container.Resolve<ModelsContext>()) != null)
+            {
+                db.Dispose();
+            }
 
-            // e.g. container.RegisterType<ITestService, TestService>();
+            container.RegisterInstance<ModelsContext>(GetDbContext(container));
+        }
 
-            //container.RegisterType<>();
-            container.RegisterType<ModelsContext>();
-
-            container.RegisterInstance<ITokenService>(GetTokenService(container));
-            container.RegisterInstance<IUserService>(GetUserService(container));
-            container.RegisterInstance<IAuthService>(GetAuthService(container));
-
-            DependencyResolver.SetResolver(new UnityDependencyResolver(container));
+        static ModelsContext GetDbContext(IUnityContainer container)
+        {
+            return new ModelsContext();
         }
 
         static ITokenService GetTokenService(IUnityContainer container)
@@ -36,17 +41,16 @@ namespace BlogMVC
 
         static IUserService GetUserService(IUnityContainer container)
         {
-            return new UserService(container.Resolve<ModelsContext>());
+            return new UserService();
         }
 
         static IAuthService GetAuthService(IUnityContainer container)
         {
             return new AuthService(
                     container.Resolve<IUserService>(),
-                    container.Resolve<ITokenService>(),
-                    container.Resolve<ModelsContext>()
+                    container.Resolve<ITokenService>()
                 );
         }
-        
+
     }
 }

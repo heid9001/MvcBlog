@@ -15,16 +15,12 @@ namespace BlogMVC.Controllers
     [JwtAuthorize(Roles = "admin")]
     public class UsersController : Controller
     {
-        private ModelsContext db;
-
-        public UsersController(ModelsContext db)
-        {
-            this.db = db;
-        }
+        public ModelsContext db => DependencyResolver.Current.GetService<ModelsContext>();
 
         // GET: Users
         public ActionResult Index()
         {
+
             return View(db.Users.ToList());
         }
 
@@ -92,13 +88,16 @@ namespace BlogMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Name,IsAuthenticated,Password,Role")] User user)
         {
+            var old = db.Users.Where(a => a.Id == user.Id).SingleOrDefault();
+
             if (ModelState.IsValid)
             {
                 var key = JwtUtils.CreateSymmetricKey(user.Name + user.Password);
                 var token = JwtUtils.CreateJWSToken(key, new Claim("Role", user.Role));
-                user.IdentityKey = Encoding.UTF8.GetString(key.Key);
-                user.AuthorizeToken = token;
-                db.Entry(user).State = EntityState.Modified;
+                old.IdentityKey = Encoding.UTF8.GetString(key.Key);
+                old.AuthorizeToken = token;
+                old.Name = user.Name;
+                old.IsAuthenticated = user.IsAuthenticated;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -125,6 +124,13 @@ namespace BlogMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(long id)
         {
+            var currentUser = (User) HttpContext.User.Identity;
+
+            if (currentUser.Id == id)
+            {
+                return new HttpNotFoundResult();
+            }
+
             User user = db.Users.Find(id);
             db.Users.Remove(user);
             db.SaveChanges();
@@ -133,10 +139,10 @@ namespace BlogMVC.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            /*if (disposing)
             {
                 db.Dispose();
-            }
+            }*/
             base.Dispose(disposing);
         }
     }
