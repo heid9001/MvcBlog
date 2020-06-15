@@ -1,10 +1,8 @@
-﻿using System.Data.Entity;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using BlogMVC.Models;
 using BlogMVC.Services.Filters;
-using BlogMVC.Services.Interfaces;
 
 
 namespace BlogMVC.Controllers
@@ -13,13 +11,7 @@ namespace BlogMVC.Controllers
     public class ArticlesController : Controller
     {
         public ModelsContext db => DependencyResolver.Current.GetService<ModelsContext>();
-        private IAuthService _auth;
 
-
-        public ArticlesController(ModelsContext db, IAuthService auth)
-        {
-            _auth = auth;
-        }
 
         // GET: Articles
         public ActionResult Index()
@@ -96,7 +88,7 @@ namespace BlogMVC.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Title,Content")] Article article)
+        public ActionResult Edit(Article article)
         {
             var user = (User)HttpContext.User.Identity;
             if (ModelState.IsValid)

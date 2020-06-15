@@ -17,12 +17,6 @@ namespace BlogMVC.Utils
         static JwtSecurityTokenHandler _handler = new JwtSecurityTokenHandler();
 
         // создание закрытого ключа
-        public static string CreateSymmetricKeyStr(string word)
-        {
-            var key = CreateSymmetricKey(word);
-            return Encoding.UTF8.GetString(key.Key);
-        }
-        
         public static SymmetricSecurityKey CreateSymmetricKey(string word)
         {
             return new SymmetricSecurityKey(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(word)));
@@ -47,12 +41,6 @@ namespace BlogMVC.Utils
         public static bool ValidateToken(string token)
         {
             return _handler.CanReadToken(token);
-        }
-
-        public static SymmetricSecurityKey CreateKeyFromStr(string str)
-        {
-            var bytes = Encoding.UTF8.GetBytes(str);
-            return new SymmetricSecurityKey(bytes);
         }
 
         // проверка подписи токена 

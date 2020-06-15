@@ -1,5 +1,4 @@
-﻿using System;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using BlogMVC.Models.Transfer;
 using BlogMVC.Services.Interfaces;
 
@@ -15,7 +14,9 @@ namespace BlogMVC.Controllers
             _authService = authService;
         }
 
+        
         [HttpGet]
+        [OutputCache(VaryByParam = "*", Duration = 0, NoStore = true)]
         public ActionResult Logout()
         {
             if (HttpContext.User.Identity.IsAuthenticated)
@@ -27,6 +28,7 @@ namespace BlogMVC.Controllers
 
         // GET: Auth
         [HttpGet]
+        [OutputCache(VaryByParam = "*", Duration = 0, NoStore = true)]
         public ActionResult Login()
         {
             if (!HttpContext.User.Identity.IsAuthenticated)
@@ -34,7 +36,7 @@ namespace BlogMVC.Controllers
                 return View();
             }
 
-            return RedirectToRoutePermanent("Home", new { action = "Index" });
+            return RedirectToRoute(new { controller = "Home", action = "Index" });
         }
 
         [HttpPost]
@@ -44,17 +46,19 @@ namespace BlogMVC.Controllers
             {
                 return View(user);
             }
-            return RedirectToRoute("Home", new { action = "Index" });
+            return RedirectToRoute(new { controller = "Home", action = "Index" });
         }
 
+        /* asp может закешировать страницу перед удалением cookie */
         [HttpGet]
+        [OutputCache(VaryByParam = "*", Duration = 0, NoStore = true)]
         public ActionResult Register()
         {
             if (! HttpContext.User.Identity.IsAuthenticated)
             {
                 return View();
             }
-            return RedirectToRoute("Home", new { action = "Index" });
+            return RedirectToRoute(new { controller = "Auth", action = "Login" });
         }
 
         [HttpPost]

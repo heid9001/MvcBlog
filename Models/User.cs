@@ -1,12 +1,11 @@
-﻿using System;
-using BlogMVC.Utils;
+﻿using BlogMVC.Utils;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Principal;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.IdentityModel.Claims;
 using System.Linq;
+
 
 namespace BlogMVC.Models
 {
@@ -57,13 +56,18 @@ namespace BlogMVC.Models
         public string Role {
 
             get {
-                if (_role == null)
+                if (_role != null)
                 {
-                    var result = new JwtSecurityTokenHandler().ReadJwtToken(AuthorizeToken);
-                    _role = (from c in result.Claims
-                                    where c.Type.Equals("Role")
-                                    select c.Value).SingleOrDefault<string>();
+                    return _role;
                 }
+                if (AuthorizeToken == null)
+                {
+                    return null;
+                }
+                var result = new JwtSecurityTokenHandler().ReadJwtToken(AuthorizeToken);
+                _role = (from c in result.Claims
+                         where c.Type.Equals("Role")
+                         select c.Value).SingleOrDefault<string>();
                 return _role;
             }
             set {

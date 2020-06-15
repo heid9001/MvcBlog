@@ -29,7 +29,6 @@ namespace BlogMVC.Services.Filters
                 return;
             }
             var user = ((User)principal.Identity);
-
             user.IsAuthenticated = true;
             _db.SaveChanges();
             filterContext.HttpContext.User = principal;

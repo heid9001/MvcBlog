@@ -1,6 +1,4 @@
-﻿using System.Data.Entity;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
@@ -17,14 +15,12 @@ namespace BlogMVC.Controllers
     {
         public ModelsContext db => DependencyResolver.Current.GetService<ModelsContext>();
 
-        // GET: Users
         public ActionResult Index()
         {
 
             return View(db.Users.ToList());
         }
 
-        // GET: Users/Details/5
         public ActionResult Details(long? id)
         {
             if (id == null)
@@ -39,18 +35,14 @@ namespace BlogMVC.Controllers
             return View(user);
         }
 
-        // GET: Users/Create
         public ActionResult Create()
         {
             return View(new User());
         }
 
-        // POST: Users/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,IsAuthenticated,Password,Role")] User user)
+        public ActionResult Create(User user)
         {
             if (ModelState.IsValid)
             {
@@ -66,7 +58,6 @@ namespace BlogMVC.Controllers
             return View(user);
         }
 
-        // GET: Users/Edit/5
         public ActionResult Edit(long? id)
         {
             if (id == null)
@@ -81,12 +72,9 @@ namespace BlogMVC.Controllers
             return View(user);
         }
 
-        // POST: Users/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,IsAuthenticated,Password,Role")] User user)
+        public ActionResult Edit(User user)
         {
             var old = db.Users.Where(a => a.Id == user.Id).SingleOrDefault();
 
@@ -101,10 +89,10 @@ namespace BlogMVC.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+
             return View(user);
         }
 
-        // GET: Users/Delete/5
         public ActionResult Delete(long? id)
         {
             if (id == null)
