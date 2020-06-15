@@ -14,7 +14,11 @@ namespace BlogMVC.Services.Filters
 
             foreach(var role in Roles.Split(','))
             {
-                authorized = _service.Authorize(role);
+                if (_service.Authorize(role))
+                {
+                    authorized = true;
+                    break;
+                }
             }
 
             if (! authorized)

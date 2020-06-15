@@ -5,13 +5,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Principal;
 using System.Collections.Generic;
 
+
 namespace BlogMVC.Models
 {
 
     [Table("users")]
     public class User : IIdentity
     {
-        public User() { }
+        public User()
+        {
+            Articles = new List<Article>();
+        }
 
         public User(string name, JwtPair pair, bool isAuthenticated)
         {
@@ -40,8 +44,13 @@ namespace BlogMVC.Models
         [Column]
         public string AuthorizeToken { get; set; }
 
+        [NotMapped]
+        public string Password { get; set; }
 
-        public ICollection<Article> Articles { get; set; }
+        [NotMapped]
+        public string Role { get; set; }
+
+        public virtual ICollection<Article> Articles { get; set; }
     }
 
 }

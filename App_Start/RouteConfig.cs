@@ -27,6 +27,12 @@ namespace BlogMVC
                 defaults: new { controller = "Articles", action = "Index" }
             );
 
+            routes.MapRoute(
+                name: "Users",
+                url: "Users/{action}",
+                defaults: new { controller = "Users", action = "Index" }
+            );
+
         }
     }
 }

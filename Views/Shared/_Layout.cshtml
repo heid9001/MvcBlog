@@ -21,13 +21,21 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    <li>@Html.ActionLink("Login", "Login", "Auth")</li>
+                    <li>@Html.ActionLink("Register", "Register", "Auth")</li>
+                    <li>@Html.ActionLink("Logout", "Logout", "Auth")</li>
+
+                    <li>@Html.ActionLink("Users", "Index", "Users")</li>
+                    <li>@Html.ActionLink("Articles", "Index", "Articles")</li>
                 </ul>
             </div>
         </div>
     </div>
     <div class="container body-content">
+        @if (HttpContext.Current.User as BlogMVC.Models.UserPrincipal != null)
+        {
+            <h2>Welcome, @HttpContext.Current.User.Identity.Name</h2>
+        }
         @RenderBody()
         <hr />
         <footer>

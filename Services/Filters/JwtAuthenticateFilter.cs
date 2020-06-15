@@ -12,6 +12,7 @@ namespace BlogMVC.Services.Filters
     public class JwtAuthenticateFilter : IAuthenticationFilter
     {
         IAuthService _service = DependencyResolver.Current.GetService<IAuthService>();
+        ModelsContext _db = DependencyResolver.Current.GetService<ModelsContext>();
 
         public void OnAuthentication(AuthenticationContext filterContext)
         {
@@ -30,6 +31,7 @@ namespace BlogMVC.Services.Filters
             var user = ((User)principal.Identity);
             user.IsAuthenticated = true;
             filterContext.HttpContext.User = principal;
+            _db.Dispose();
         }
 
         public void OnAuthenticationChallenge(AuthenticationChallengeContext filterContext)

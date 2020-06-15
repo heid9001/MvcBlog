@@ -1,4 +1,4 @@
-﻿@model IEnumerable<BlogMVC.Models.Article>
+﻿@model IEnumerable<BlogMVC.Models.User>
 
 @{
     ViewBag.Title = "Index";
@@ -12,13 +12,16 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.User)
+            @Html.DisplayNameFor(model => model.Name)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Title)
+            @Html.DisplayNameFor(model => model.IsAuthenticated)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Content)
+            @Html.DisplayNameFor(model => model.IdentityKey)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AuthorizeToken)
         </th>
         <th></th>
     </tr>
@@ -26,13 +29,16 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.User.Name)
+            @Html.DisplayFor(modelItem => item.Name)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Title)
+            @Html.DisplayFor(modelItem => item.IsAuthenticated)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Content)
+            @Html.DisplayFor(modelItem => item.IdentityKey)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AuthorizeToken)
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |

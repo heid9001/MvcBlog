@@ -1,40 +1,35 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using BlogMVC.Models;
 using BlogMVC.Services.Filters;
+using BlogMVC.Services.Interfaces;
 
 namespace BlogMVC.Controllers
 {
-    [JwtAuthorize(Roles = "admin")]
+    [JwtAuthorize(Roles = "admin,user")]
     public class ArticlesController : Controller
     {
         private ModelsContext _db;
+        private IAuthService _auth;
 
 
-        public ArticlesController(ModelsContext db)
+        public ArticlesController(ModelsContext db, IAuthService auth)
         {
             _db = db;
+            _auth = auth;
         }
 
         // GET: Articles
         public ActionResult Index()
         {
-            var user = (User) HttpContext.User.Identity;
+            var user = (User)HttpContext.User.Identity;
+            _db.Entry(user).State = EntityState.Modified;
 
-            _db.Entry(user).State = EntityState.Detached;
-
-
-            var articles = from u in _db.Users
-                           from a in u.Articles
-                           where u.Id.Equals(user.Id)
-                           select a;
-            return View(articles);
+            return View(user.Articles.ToList());
         }
 
         // GET: Articles/Details/5

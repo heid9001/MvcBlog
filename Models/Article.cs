@@ -34,7 +34,7 @@ namespace BlogMVC.Models
             }
         }
 
-        public User User {
+        public virtual User User {
             get
             {
                 return _user;
