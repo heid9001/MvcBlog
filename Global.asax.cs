@@ -13,25 +13,12 @@ namespace BlogMVC
 
         protected void Application_Start()
         {
+            UnityConfig.RegisterPerApp(_container);
+
             AreaRegistration.RegisterAllAreas();
-            
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-
-            // объекты ограниченные приложением
-            UnityConfig.RegisterPerApp(_container);
-        }
-
-        protected void Application_BeginRequest()
-        {
-            // объекты ограниченные запросом
-            UnityConfig.RegisterPerRequestStart(_container);
-        }
-
-        protected void Application_EndRequest()
-        {
-            UnityConfig.RegisterPerRequestEnd(_container);
         }
     }
 }
