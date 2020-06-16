@@ -12,8 +12,6 @@ namespace BlogMVC.Controllers
     {
         public ModelsContext db => DependencyResolver.Current.GetService<ModelsContext>();
 
-
-        // GET: Articles
         public ActionResult Index()
         {
             var user = (User)HttpContext.User.Identity;
@@ -21,7 +19,6 @@ namespace BlogMVC.Controllers
             return View(user.Articles.ToList());
         }
 
-        // GET: Articles/Details/5
         public ActionResult Details(long? id)
         {
             if (id == null)
@@ -36,16 +33,12 @@ namespace BlogMVC.Controllers
             return View(article);
         }
 
-        // GET: Articles/Create
         public ActionResult Create()
         {
             var user = (User)HttpContext.User.Identity;
             return View(new Article(user));
         }
 
-        // POST: Articles/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Title,Content")] Article article)
@@ -64,7 +57,6 @@ namespace BlogMVC.Controllers
             return View(article);
         }
 
-        // GET: Articles/Edit/5
         public ActionResult Edit(long? id)
         {
             if (id == null)
@@ -83,9 +75,6 @@ namespace BlogMVC.Controllers
             return View(article);
         }
 
-        // POST: Articles/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(Article article)
@@ -118,7 +107,6 @@ namespace BlogMVC.Controllers
             return View(article);
         }
 
-        // POST: Articles/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(long id)

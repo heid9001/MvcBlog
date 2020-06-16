@@ -1,11 +1,8 @@
 ﻿using BlogMVC.Models;
 using BlogMVC.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Filters;
+
 
 namespace BlogMVC.Services.Filters
 {
@@ -28,7 +25,8 @@ namespace BlogMVC.Services.Filters
                 filterContext.Result = new HttpUnauthorizedResult();
                 return;
             }
-            var user = ((User)principal.Identity);
+
+            var user = (User)principal.Identity;
             user.IsAuthenticated = true;
             _db.SaveChanges();
             filterContext.HttpContext.User = principal;

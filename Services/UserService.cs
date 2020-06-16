@@ -10,9 +10,6 @@ namespace BlogMVC.Services
 {
     public class UserService: IUserService
     {
-        public UserService()
-        {
-        }
 
         public ModelsContext Db => DependencyResolver.Current.GetService<ModelsContext>();
 

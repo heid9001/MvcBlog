@@ -4,8 +4,6 @@ using BlogMVC.Utils;
 using BlogMVC.Models;
 using BlogMVC.Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
-using System;
-using System.Data.Entity;
 using System.Web.Mvc;
 
 namespace BlogMVC.Services
@@ -34,7 +32,6 @@ namespace BlogMVC.Services
             return false;
         }
 
-        // заведение учетной записи
         public User Register(string login, string password, string role)
         {
             var ctx = HttpContext.Current;
@@ -53,7 +50,6 @@ namespace BlogMVC.Services
             return user;
         }
 
-        // установка токена в куки юзера в контекст
         public bool Authenticate(string login, string password)
         {
             var ctx = HttpContext.Current;
@@ -63,10 +59,7 @@ namespace BlogMVC.Services
             {
                 return true;
             }
-
             var token = (string) _tokenService.GetTokenFromCookie();
-
-            // если токен есть проверяем подпись
             if (token != null)
             {
                 if (JwtUtils.VerifyToken(JwtUtils.CreateSymmetricKey(login + password), token) == null)
@@ -81,16 +74,12 @@ namespace BlogMVC.Services
                 Db.SaveChanges();
                 return true;
             }
-
-            // проверка по базе
             var user = _userService.FindBySecret(login+password);
             if (user == null)
             {
                 response.StatusCode = 401;
                 return false;
             }
-
-            // обновление модели юзера
             user.IsAuthenticated = true;
             Db.SaveChanges();
             ctx.User = new UserPrincipal(user);
@@ -124,7 +113,6 @@ namespace BlogMVC.Services
 
             string token;
 
-            // получаем токен из кук и по нему юзера из бд
             if (user == null)
             {
                 token = _tokenService.GetTokenFromCookie();
@@ -133,8 +121,6 @@ namespace BlogMVC.Services
                     response.StatusCode = 401;
                     return false;
                 }
-
-                // поиск юзера по токену в бд
                 user = GetUserByToken(token);
                 if (user == null || ! ((User) user.Identity).AuthorizeToken.Equals(token) || ! user.Identity.IsAuthenticated)
                 {
@@ -142,14 +128,11 @@ namespace BlogMVC.Services
                     return false;
                 }
             }
-            // получаем токен из HttpContext.User
             else
             {
                 token = ((User)user.Identity).AuthorizeToken;
             }
             var result = new JwtSecurityTokenHandler().ReadJwtToken(token);
-
-            // проверка роли
             string match = (from c in result.Claims
                         where c.Type.Equals("Role") && c.Value.Equals(role)
                         select c.Value).SingleOrDefault<string>();

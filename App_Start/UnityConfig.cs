@@ -1,6 +1,7 @@
 using BlogMVC.Models;
 using BlogMVC.Services;
 using BlogMVC.Services.Interfaces;
+using System.Web;
 using System.Web.Mvc;
 using Unity;
 using Unity.Mvc5;
@@ -18,15 +19,18 @@ namespace BlogMVC
             DependencyResolver.SetResolver(new UnityDependencyResolver(appContainer));
         }
 
-        public static void RegisterPerRequest(UnityContainer container)
+        public static void RegisterPerRequestStart(UnityContainer container)
+        {
+            container.RegisterInstance<ModelsContext>(GetDbContext(container));
+        }
+
+        public static void RegisterPerRequestEnd(UnityContainer container)
         {
             ModelsContext db;
             if ( ( db = container.Resolve<ModelsContext>()) != null)
             {
                 db.Dispose();
             }
-
-            container.RegisterInstance<ModelsContext>(GetDbContext(container));
         }
 
         static ModelsContext GetDbContext(IUnityContainer container)
